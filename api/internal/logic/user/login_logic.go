@@ -37,7 +37,7 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 		token string
 	)
 
-	user, err = l.svcCtx.UserModel.QueryUser(l.ctx, fmt.Sprintf("where email = %s", req.Email))
+	user, err = l.svcCtx.UserModel.QueryUser(l.ctx, fmt.Sprintf("email = '%s'", req.Email))
 	if err != nil {
 		return nil, errorx.Internal(err, "query user error").Show()
 	}
@@ -57,6 +57,7 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 		err = errorx.New("gen token error", int(codex.CodeGenTokenErr), codex.CodeGenTokenErr.Msg())
 		return
 	}
+
 	resp = &types.LoginResp{
 		TokenReply: types.TokenReply{
 			AccessToken:  token,

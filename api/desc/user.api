@@ -8,9 +8,9 @@ type (
 )
 
 @server(
-    jwt: Auth
+//    jwt: Auth
     group: user
-    middleware : Authority
+//    middleware : Authority
     prefix: /user
 )
 service chat {
