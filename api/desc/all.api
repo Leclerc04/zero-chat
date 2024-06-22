@@ -1,2 +1,2 @@
 import "user.api"
-//import "message.api"
+import "message.api"

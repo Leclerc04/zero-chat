@@ -14,3 +14,10 @@ type LoginReq struct {
 type LoginResp struct {
 	TokenReply
 }
+
+type SendMsgReq struct {
+	Msg string `json:"msg"`
+}
+
+type SendMsgResp struct {
+}

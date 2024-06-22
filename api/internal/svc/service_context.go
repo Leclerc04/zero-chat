@@ -2,7 +2,7 @@ package svc
 
 import (
 	"database/sql"
-	"github.com/zeromicro/go-zero/core/stores/redis"
+	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/rest"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -17,7 +17,7 @@ import (
 type ServiceContext struct {
 	Config       config.Config
 	Authority    rest.Middleware
-	Redis        *redis.Redis
+	Redis        *redis.Client
 	DB           *gorm.DB
 	UserModel    model.UserModel
 	MessageModel model.MessageModel
@@ -25,10 +25,10 @@ type ServiceContext struct {
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	db := Init(c)
-	rds := redis.MustNewRedis(c.RedisConf)
+	rds := InitRedis(c)
 	return &ServiceContext{
 		Config:       c,
-		Authority:    middleware.NewAuthorityMiddleware().Handle,
+		Authority:    middleware.NewAuthorityMiddleware(c.Auth.AccessSecret).Handle,
 		DB:           db,
 		Redis:        rds,
 		UserModel:    model.NewUserModel(db),
@@ -54,6 +54,15 @@ func Init(c config.Config) (db *gorm.DB) {
 	sqlDB.SetMaxIdleConns(c.MySQL.MaxIdleCons)
 	sqlDB.SetMaxOpenConns(c.MySQL.MaxOpenCons)
 	return
+}
+
+func InitRedis(c config.Config) (rds *redis.Client) {
+	return redis.NewClient(&redis.Options{
+		Addr:     c.RedisConf.Host,
+		Password: c.RedisConf.Pass,
+		DB:       0,
+	})
+
 }
 
 // configLog 根据配置决定是否开启日志

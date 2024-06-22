@@ -4,6 +4,7 @@ package handler
 import (
 	"net/http"
 
+	chat "zero-chat/api/internal/handler/chat"
 	user "zero-chat/api/internal/handler/user"
 	"zero-chat/api/internal/svc"
 
@@ -25,5 +26,30 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 		},
 		rest.WithPrefix("/user"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.Authority},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/send",
+					Handler: chat.SendMsgHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/chat",
+					Handler: chat.ChatHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/cao",
+					Handler: chat.CaoHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithPrefix("/chat"),
 	)
 }

@@ -12,8 +12,10 @@ type AuthorityMiddleware struct {
 	Secret string
 }
 
-func NewAuthorityMiddleware() *AuthorityMiddleware {
-	return &AuthorityMiddleware{}
+func NewAuthorityMiddleware(secret string) *AuthorityMiddleware {
+	return &AuthorityMiddleware{
+		Secret: secret,
+	}
 }
 
 func (m *AuthorityMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
