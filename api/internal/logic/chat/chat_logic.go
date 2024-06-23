@@ -28,6 +28,9 @@ func NewChatLogic(ctx context.Context, svcCtx *svc.ServiceContext, w http.Respon
 }
 
 func (l *ChatLogic) Chat() error {
+	// 接收来自客户端的消息
+	// 确定发送者和接收者
+	// 消息转发给接收者
 	//ticker := time.NewTicker(3 * time.Second)
 	upgrade := websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
@@ -47,8 +50,15 @@ func (l *ChatLogic) Chat() error {
 				fmt.Println("received err:", err)
 			}
 			fmt.Println("received msg:", string(msg))
-			conn.WriteMessage(websocket.TextMessage, msg)
+			//conn.WriteMessage(websocket.TextMessage, msg)
+			if err = l.svcCtx.Redis.Publish(l.ctx, "2", msg).Err(); err != nil {
+				fmt.Println("publish err:", err)
+				return
+			}
+
+			fmt.Println("send to redis msg:", string(msg))
 		}
 	}()
+
 	return nil
 }

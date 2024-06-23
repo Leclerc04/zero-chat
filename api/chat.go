@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 
@@ -27,5 +28,23 @@ func main() {
 	handler.RegisterHandlers(server, ctx)
 
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
+
+	ct := context.Background()
+
+	go tmp(ct, ctx)
+
 	server.Start()
+}
+
+func tmp(ctx context.Context, server *svc.ServiceContext) {
+	fmt.Println("start sub")
+	for {
+		sub := server.Redis.Subscribe(ctx, "2")
+		message, err := sub.ReceiveMessage(ctx)
+		if err != nil {
+			fmt.Println("err main:", err)
+		}
+		fmt.Println("main msg:", message)
+	}
+
 }

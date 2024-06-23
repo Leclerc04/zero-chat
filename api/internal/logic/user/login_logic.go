@@ -65,5 +65,16 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 		},
 	}
 
+	// 订阅redis
+	l.SubRedis(user)
+
 	return
+}
+
+func (l *LoginLogic) SubRedis(user *model.User) {
+	uid := strconv.FormatInt(user.Id, 10)
+	l.svcCtx.Redis.Set(l.ctx, "online_user:"+uid, uid, 30*time.Minute)
+
+	l.svcCtx.Redis.Subscribe(l.ctx, uid)
+
 }
