@@ -1,0 +1,24 @@
+syntax = "v1"
+
+@server(
+	jwt: Auth
+	group: chat
+	middleware : Authority
+	prefix: /chat
+)
+service chat {
+	//    @handler SendMsg
+	//    get /send
+	@handler Chat
+	get /chat
+	//    @handler Cao
+	//    post /cao
+}
+
+type (
+	SendMsgReq {
+		Msg string `json:"msg"`
+	}
+	SendMsgResp {
+	}
+)

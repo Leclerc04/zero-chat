@@ -1,0 +1,31 @@
+syntax = "v1"
+
+type (
+	TokenReply {
+		AccessToken  string `json:"access_token"`
+		AccessExpire int64  `json:"access_expire"`
+	}
+)
+
+@server(
+	//    jwt: Auth
+	group: user
+	//    middleware : Authority
+	prefix: /user
+)
+service user {
+	@handler Login
+	post /login (LoginReq) returns (LoginResp)
+	@handler Register
+	post /reg (LoginReq) returns (LoginResp)
+}
+
+type (
+	LoginReq {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+	LoginResp {
+		TokenReply
+	}
+)
