@@ -11,8 +11,10 @@ service chat {
 	//    get /send
 	@handler Chat
 	get /chat
-	//    @handler Cao
-	//    post /cao
+	@handler Sub
+	post /sub
+	@handler Pub
+	post /pub
 }
 
 type (

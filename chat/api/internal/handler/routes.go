@@ -20,6 +20,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/chat",
 					Handler: chat.ChatHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/sub",
+					Handler: chat.SubHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/pub",
+					Handler: chat.PubHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

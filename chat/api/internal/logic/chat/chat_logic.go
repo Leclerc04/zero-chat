@@ -48,7 +48,7 @@ func (l *ChatLogic) Chat() error {
 			}
 			fmt.Println("received msg:", string(msg))
 			//conn.WriteMessage(websocket.TextMessage, msg)
-			if err = l.svcCtx.Redis.Publish(l.ctx, "2", msg).Err(); err != nil {
+			if err = l.svcCtx.Redis.Publish(context.Background(), "2", msg).Err(); err != nil {
 				fmt.Println("publish err:", err)
 				return
 			}
