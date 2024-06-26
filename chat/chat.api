@@ -11,15 +11,16 @@ service chat {
 	//    get /send
 	@handler Chat
 	get /chat
-	@handler Sub
-	post /sub
-	@handler Pub
-	post /pub
+	@handler SendMsg
+	post /sub (SendMsgReq)
+	//	@handler Pub
+	//	post /pub
 }
 
 type (
 	SendMsgReq {
 		Msg string `json:"msg"`
+		Uid string `json:"uid"`
 	}
 	SendMsgResp {
 	}

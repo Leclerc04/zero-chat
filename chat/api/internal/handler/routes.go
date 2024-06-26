@@ -23,12 +23,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				{
 					Method:  http.MethodPost,
 					Path:    "/sub",
-					Handler: chat.SubHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/pub",
-					Handler: chat.PubHandler(serverCtx),
+					Handler: chat.SendMsgHandler(serverCtx),
 				},
 			}...,
 		),

@@ -24,14 +24,14 @@ type (
 		ctx     context.Context
 	}
 	SendMsgRequest struct {
-		FromToken     string `json:"fromToken"`
-		ToToken       string `json:"toToken"`
+		FromUid       string `json:"fromUid"`
+		ToUid         string `json:"toUid"`
 		Body          string `json:"body"`
 		TimeStamp     int64  `json:"timeStamp"`
 		RemoteAddress string `json:"remoteAddress"`
 	}
 	LoginRequest struct {
-		Token string `json:"token"`
+		Uid string `json:"uid"`
 	}
 	SendMsgResponse struct {
 		FromToken     string `json:"fromToken"`     // 消息来自谁
@@ -77,7 +77,7 @@ func (l *ImServer) SendMsg(r *SendMsgRequest) (*SendMsgResponse, error) {
 	l.lock.Lock()
 	defer l.lock.Unlock()
 	log.Printf("send SendMsgRequest  %+v", r)
-	conn := l.clients[r.ToToken] //c获取用户的websocket链接
+	conn := l.clients[r.ToUid] //获取用户的websocket链接
 	if conn == nil {
 		return nil, errors.New("user don't login")
 	}
@@ -88,9 +88,9 @@ func (l *ImServer) SendMsg(r *SendMsgRequest) (*SendMsgResponse, error) {
 		return nil, errors.New("send message error")
 	}
 	// 向websocket发送消息
-	if err := conn.WriteMessage(websocket.TextMessage, bodyMsg); err != nil {
+	if err = conn.WriteMessage(websocket.TextMessage, bodyMsg); err != nil {
 		log.Printf("send message err %v", err)
-		l.clients[r.ToToken] = nil
+		l.clients[r.ToUid] = nil
 		//log.Println(conn.Close())
 		return nil, err
 	}
@@ -101,7 +101,7 @@ func (l *ImServer) SendMsg(r *SendMsgRequest) (*SendMsgResponse, error) {
 func (l *ImServer) Subscribe() {
 	fmt.Println("start subscribe")
 	for {
-		sub := l.rds.Subscribe(l.ctx)
+		sub := l.rds.Subscribe(l.ctx, "ws")
 		message, err := sub.ReceiveMessage(l.ctx)
 		if err != nil {
 			log.Printf("[rds received msg errror]:%+v", err)
@@ -158,7 +158,8 @@ func (l *ImServer) login(w http.ResponseWriter, r *http.Request) {
 		log.Printf("json.Unmarshal msg err %+v", err)
 		return
 	}
-	l.clients[loginMsgRequest.Token] = conn
+	l.clients[loginMsgRequest.Uid] = conn
 	fmt.Println(l.clients)
+	fmt.Println("用户已登录：", string(message))
 	return
 }

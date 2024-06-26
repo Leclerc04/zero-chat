@@ -3,6 +3,7 @@ package types
 
 type SendMsgReq struct {
 	Msg string `json:"msg"`
+	Uid string `json:"uid"`
 }
 
 type SendMsgResp struct {
