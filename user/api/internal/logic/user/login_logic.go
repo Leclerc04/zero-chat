@@ -62,6 +62,7 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 		TokenReply: types.TokenReply{
 			AccessToken:  token,
 			AccessExpire: iat + seconds,
+			Uid:          strconv.FormatInt(user.Id, 10),
 		},
 	}
 

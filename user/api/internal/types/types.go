@@ -4,6 +4,14 @@ package types
 type TokenReply struct {
 	AccessToken  string `json:"access_token"`
 	AccessExpire int64  `json:"access_expire"`
+	Uid          string `json:"uid"`
+}
+
+type User struct {
+	Id       int64  `json:"id,optional"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	Nickname string `json:"nickname"`
 }
 
 type LoginReq struct {
@@ -13,4 +21,16 @@ type LoginReq struct {
 
 type LoginResp struct {
 	TokenReply
+}
+
+type GetContactResp struct {
+	List []*User `json:"list"`
+}
+
+type AddContactReq struct {
+	Uid string `json:"uid"`
+}
+
+type DelContactReq struct {
+	Uid string `json:"uid"`
 }

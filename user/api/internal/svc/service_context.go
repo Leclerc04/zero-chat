@@ -10,25 +10,29 @@ import (
 	"gorm.io/gorm/schema"
 	"log"
 	"zero-chat/user/api/internal/config"
+	"zero-chat/user/api/internal/middleware"
 	"zero-chat/user/api/internal/model"
 )
 
 type ServiceContext struct {
-	Config    config.Config
-	Authority rest.Middleware
-	Redis     *redis.Client
-	DB        *gorm.DB
-	UserModel model.UserModel
+	Config       config.Config
+	Authority    rest.Middleware
+	Redis        *redis.Client
+	DB           *gorm.DB
+	UserModel    model.UserModel
+	ContactModel model.ContactsModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	db := Init(c)
 	rds := InitRedis(c)
 	return &ServiceContext{
-		Config:    c,
-		DB:        db,
-		Redis:     rds,
-		UserModel: model.NewUserModel(db),
+		Config:       c,
+		DB:           db,
+		Authority:    middleware.NewAuthorityMiddleware(c.Auth.AccessSecret).Handle,
+		Redis:        rds,
+		UserModel:    model.NewUserModel(db),
+		ContactModel: model.NewContactsModel(db),
 	}
 }
 

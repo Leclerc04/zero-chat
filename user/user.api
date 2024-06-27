@@ -4,6 +4,13 @@ type (
 	TokenReply {
 		AccessToken  string `json:"access_token"`
 		AccessExpire int64  `json:"access_expire"`
+		Uid          string `json:"uid"`
+	}
+	User {
+		Id       int64  `json:"id,optional"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
+		Nickname string `json:"nickname"`
 	}
 )
 
@@ -27,5 +34,32 @@ type (
 	}
 	LoginResp {
 		TokenReply
+	}
+)
+
+@server(
+	jwt: Auth
+	group: contact
+	middleware : Authority
+	prefix: /user
+)
+service user {
+	@handler GetContact
+	post /get  returns (GetContactResp)
+	@handler AddContact
+	post /add (AddContactReq)
+	@handler DelContact
+	post /del (DelContactReq)
+}
+
+type (
+	GetContactResp {
+		List []*User `json:"list"`
+	}
+	AddContactReq {
+		Uid string `json:"uid"`
+	}
+	DelContactReq {
+		Uid string `json:"uid"`
 	}
 )
