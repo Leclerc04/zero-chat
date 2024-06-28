@@ -99,8 +99,8 @@ func (l *ImServer) SendMsg(r *SendMsgRequest) (*SendMsgResponse, error) {
 }
 
 func (l *ImServer) Subscribe() {
-	fmt.Println("start subscribe")
 	for {
+		fmt.Println("start subscribe")
 		sub := l.rds.Subscribe(l.ctx, "ws")
 		message, err := sub.ReceiveMessage(l.ctx)
 		if err != nil {
@@ -118,7 +118,6 @@ func (l *ImServer) Subscribe() {
 			return
 		}
 		log.Printf("has Subscribe msg %+v", message.Payload)
-		return
 	}
 }
 

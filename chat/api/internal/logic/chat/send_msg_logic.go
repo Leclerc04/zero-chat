@@ -3,6 +3,7 @@ package chat
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"time"
 	"zero-chat/chat/api/internal/common/imserver"
@@ -45,5 +46,6 @@ func (l *SendMsgLogic) SendMsg(req *types.SendMsgReq) error {
 		log.Printf("publish msg err:%s", err)
 		return err
 	}
+	fmt.Println("msg sent")
 	return nil
 }
