@@ -25,7 +25,9 @@ type (
 	}
 	SendMsgRequest struct {
 		FromUid       string `json:"fromUid"`
+		FromNickname  string `json:"fromNickname"`
 		ToUid         string `json:"toUid"`
+		ToNickname    string `json:"toNickname"`
 		Body          string `json:"body"`
 		TimeStamp     int64  `json:"timeStamp"`
 		RemoteAddress string `json:"remoteAddress"`

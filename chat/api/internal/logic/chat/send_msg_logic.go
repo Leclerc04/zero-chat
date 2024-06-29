@@ -32,8 +32,9 @@ func (l *SendMsgLogic) SendMsg(req *types.SendMsgReq) error {
 	userId := l.ctx.Value("userID").(string)
 
 	r := imserver.SendMsgRequest{
-		FromUid:   userId,  // qq
-		ToUid:     req.Uid, // 163
+		FromUid: userId,  // qq
+		ToUid:   req.Uid, // 163
+		// todo : lack of nickname field. i will add this field when i integrating RPC service
 		Body:      req.Msg,
 		TimeStamp: time.Now().Unix(),
 	}
