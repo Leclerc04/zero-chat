@@ -1,6 +1,7 @@
 package model
 
 import (
+	"context"
 	"gorm.io/gorm"
 )
 
@@ -19,8 +20,14 @@ type (
 	}
 
 	customMessageLogicModel interface {
+		GetAllHistory(ctx context.Context)
 	}
 )
+
+func (m *defaultMessageModel) GetAllHistory(ctx context.Context) {
+	//TODO implement me
+	panic("implement me")
+}
 
 // NewMessageModel returns a model for the database table.
 func NewMessageModel(conn *gorm.DB) MessageModel {

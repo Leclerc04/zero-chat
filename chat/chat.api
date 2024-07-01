@@ -1,5 +1,17 @@
 syntax = "v1"
 
+type (
+	Message {
+		Msg string `json:"msg"`
+		T   int64  `json:"t"`
+	}
+	MessageInfo {
+		ToUid   int64  `json:"to_uid"`
+		ToUser  string `json:"to_user"`
+		LastMsg string `json:"last_msg"`
+	}
+)
+
 @server(
 	jwt: Auth
 	group: chat
@@ -7,17 +19,26 @@ syntax = "v1"
 	prefix: /chat
 )
 service chat {
-	//    @handler SendMsg
-	//    get /send
 	@handler Chat
 	get /chat
 	@handler SendMsg
-	post /sub (SendMsgReq)
-	//	@handler Pub
-	//	post /pub
+	post /send (SendMsgReq)
+	@handler GetAllChat
+	get /all returns (GetAllChatResp)
+	@handler GetChatDetail
+	get /detail (GetChatHistoryReq) returns (GetChatHistoryResp)
 }
 
 type (
+	GetAllChatResp {
+		List []*MessageInfo `json:"list"`
+	}
+	GetChatHistoryReq {
+		ToUid int64 `json:"to_uid"`
+	}
+	GetChatHistoryResp {
+		List []*Message `json:"list"`
+	}
 	SendMsgReq {
 		Msg string `json:"msg"`
 		Uid string `json:"uid"`

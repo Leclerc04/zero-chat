@@ -29,7 +29,7 @@ func NewGetContactLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetCon
 func (l *GetContactLogic) GetContact() (resp *types.GetContactResp, err error) {
 	uid := l.ctx.Value("userID").(string)
 	query := fmt.Sprintf("owner_id = %s", uid)
-	contacts, err := l.svcCtx.ContactModel.QueryUser(l.ctx, query)
+	contacts, err := l.svcCtx.ContactModel.QueryUsers(l.ctx, query)
 	if err != nil {
 		return nil, errorx.Internal(err, "database error").Show()
 

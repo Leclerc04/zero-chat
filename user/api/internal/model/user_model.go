@@ -22,8 +22,28 @@ type (
 
 	customUserLogicModel interface {
 		QueryUser(ctx context.Context, query string) (*User, error)
+		QueryUsersByKey(ctx context.Context, query string, uid int) ([]User, error)
 	}
 )
+
+func (m *defaultUserModel) QueryUsersByKey(ctx context.Context, query string, uid int) ([]User, error) {
+	var user []User
+	// select * from user where id in
+	//(select contact_id
+	//from contacts where owner_id=2) and nickname like '%仁%';
+	err := m.conn.WithContext(ctx).Where(query).
+		Where("id IN (?)",
+			m.conn.Table("contacts").Select("contact_id").Where("owner_id = ?", uid),
+		).Find(&user).Error
+	switch {
+	case err == nil:
+		return user, nil
+	case errors.Is(err, gorm.ErrRecordNotFound):
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
 
 func (m *defaultUserModel) QueryUser(ctx context.Context, query string) (*User, error) {
 	var user User

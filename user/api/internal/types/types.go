@@ -23,6 +23,22 @@ type LoginResp struct {
 	TokenReply
 }
 
+type SearchUserReq struct {
+	Uid string `json:"uid"`
+}
+
+type SearchUserResp struct {
+	User
+}
+
+type SearchContactReq struct {
+	Key string `json:"key"`
+}
+
+type SearchContactResp struct {
+	List []*User `json:"list"`
+}
+
 type GetContactResp struct {
 	List []*User `json:"list"`
 }

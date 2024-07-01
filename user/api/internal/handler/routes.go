@@ -47,6 +47,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/del",
 					Handler: contact.DelContactHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/search",
+					Handler: contact.SearchContactHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/search/user",
+					Handler: contact.SearchUserHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

@@ -4,9 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/bellingham07/go-tool/errorx"
 	"log"
+	"strconv"
 	"time"
 	"zero-chat/chat/api/internal/common/imserver"
+	"zero-chat/chat/api/internal/model"
 
 	"zero-chat/chat/api/internal/svc"
 	"zero-chat/chat/api/internal/types"
@@ -48,5 +51,16 @@ func (l *SendMsgLogic) SendMsg(req *types.SendMsgReq) error {
 		return err
 	}
 	fmt.Println("msg sent")
+	// store msg to db
+	sId, _ := strconv.ParseInt(userId, 10, 64)
+	rId, _ := strconv.ParseInt(req.Uid, 10, 64)
+	message := &model.Message{
+		SendId:    sId,
+		ReceiveId: rId,
+		Msg:       req.Msg,
+	}
+	if err = l.svcCtx.MessageModel.Insert(l.ctx, l.svcCtx.DB, message); err != nil {
+		return errorx.Internal(err, "store msg error").Show()
+	}
 	return nil
 }

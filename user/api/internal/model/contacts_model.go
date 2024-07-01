@@ -21,11 +21,25 @@ type (
 	}
 
 	customContactsLogicModel interface {
-		QueryUser(ctx context.Context, query string) ([]Contacts, error)
+		QueryUsers(ctx context.Context, query string) ([]Contacts, error)
+		QueryUser(ctx context.Context, query string) (*Contacts, error)
 	}
 )
 
-func (m *defaultContactsModel) QueryUser(ctx context.Context, query string) ([]Contacts, error) {
+func (m *defaultContactsModel) QueryUser(ctx context.Context, query string) (*Contacts, error) {
+	var contact *Contacts
+	err := m.conn.WithContext(ctx).Where(query).Find(&contact).Error
+	switch {
+	case err == nil:
+		return contact, nil
+	case errors.Is(err, gorm.ErrRecordNotFound):
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultContactsModel) QueryUsers(ctx context.Context, query string) ([]Contacts, error) {
 	var contacts []Contacts
 	err := m.conn.WithContext(ctx).Where(query).Find(&contacts).Error
 	switch {

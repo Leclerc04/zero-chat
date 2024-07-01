@@ -22,8 +22,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPost,
-					Path:    "/sub",
+					Path:    "/send",
 					Handler: chat.SendMsgHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/all",
+					Handler: chat.GetAllChatHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/detail",
+					Handler: chat.GetChatDetailHandler(serverCtx),
 				},
 			}...,
 		),

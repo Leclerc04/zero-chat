@@ -45,14 +45,30 @@ type (
 )
 service user {
 	@handler GetContact
-	post /get  returns (GetContactResp)
+	post /get returns (GetContactResp)
 	@handler AddContact
 	post /add (AddContactReq)
 	@handler DelContact
 	post /del (DelContactReq)
+	@handler SearchContact
+	post /search (SearchContactReq) returns (SearchContactResp)
+	@handler SearchUser
+	post /search/user (SearchUserReq) returns (SearchUserResp)
 }
 
 type (
+	SearchUserReq {
+		Uid string `json:"uid"`
+	}
+	SearchUserResp {
+		User
+	}
+	SearchContactReq {
+		Key string `json:"key"`
+	}
+	SearchContactResp {
+		List []*User `json:"list"`
+	}
 	GetContactResp {
 		List []*User `json:"list"`
 	}

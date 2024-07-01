@@ -37,5 +37,12 @@ func (l *AddContactLogic) AddContact(req *types.AddContactReq) error {
 	if err := l.svcCtx.ContactModel.Insert(l.ctx, l.svcCtx.DB, newContact); err != nil {
 		return errorx.Internal(err, "database error").Show()
 	}
+	newContactTwo := &model.Contacts{
+		OwnerId:   contactId,
+		ContactId: uid,
+	}
+	if err := l.svcCtx.ContactModel.Insert(l.ctx, l.svcCtx.DB, newContactTwo); err != nil {
+		return errorx.Internal(err, "database error").Show()
+	}
 	return nil
 }
