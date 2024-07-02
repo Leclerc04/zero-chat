@@ -2,8 +2,9 @@ syntax = "v1"
 
 type (
 	Message {
-		Msg string `json:"msg"`
-		T   int64  `json:"t"`
+		Msg    string `json:"msg"`
+		SendId int64  `json:"send_id"`
+		T      int64  `json:"t"`
 	}
 	MessageInfo {
 		ToUid   int64  `json:"to_uid"`
@@ -26,7 +27,7 @@ service chat {
 	@handler GetAllChat
 	get /all returns (GetAllChatResp)
 	@handler GetChatDetail
-	get /detail (GetChatHistoryReq) returns (GetChatHistoryResp)
+	post /detail (GetChatHistoryReq) returns (GetChatHistoryResp)
 }
 
 type (

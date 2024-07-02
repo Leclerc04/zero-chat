@@ -2,8 +2,9 @@
 package types
 
 type Message struct {
-	Msg string `json:"msg"`
-	T   int64  `json:"t"`
+	Msg    string `json:"msg"`
+	SendId int64  `json:"send_id"`
+	T      int64  `json:"t"`
 }
 
 type MessageInfo struct {

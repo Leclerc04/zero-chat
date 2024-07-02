@@ -2,6 +2,9 @@ package chat
 
 import (
 	"context"
+	"fmt"
+	"github.com/bellingham07/go-tool/errorx"
+	"strconv"
 
 	"zero-chat/chat/api/internal/svc"
 	"zero-chat/chat/api/internal/types"
@@ -24,6 +27,29 @@ func NewGetAllChatLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetAll
 }
 
 func (l *GetAllChatLogic) GetAllChat() (resp *types.GetAllChatResp, err error) {
+	fmt.Println("?")
+	uid, _ := strconv.ParseInt(l.ctx.Value("userID").(string), 10, 64)
+	history, err := l.svcCtx.MessageModel.GetAllHistory(l.ctx, uid)
+	if err != nil {
+		return nil, errorx.Internal(err, "get history error").Show()
+	}
+
+	resp = new(types.GetAllChatResp)
+	resp.List = make([]*types.MessageInfo, 0, len(history))
+
+	for _, h := range history {
+		tmp := &types.MessageInfo{
+			ToUid:   h.Id,
+			ToUser:  strconv.FormatInt(h.Id, 10),
+			LastMsg: h.Msg,
+		}
+		resp.List = append(resp.List, tmp)
+	}
 
 	return
 }
+
+// todo get username
+//func (l *GetAllChatLogic)getUid(uid int64) string{
+//	l.svcCtx.
+//}
