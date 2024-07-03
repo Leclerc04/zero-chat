@@ -10,6 +10,7 @@ import (
 	"time"
 	"zero-chat/chat/api/internal/common/imserver"
 	"zero-chat/chat/api/internal/model"
+	"zero-chat/user/rpc/pb"
 
 	"zero-chat/chat/api/internal/svc"
 	"zero-chat/chat/api/internal/types"
@@ -35,11 +36,11 @@ func (l *SendMsgLogic) SendMsg(req *types.SendMsgReq) error {
 	userId := l.ctx.Value("userID").(string)
 
 	r := imserver.SendMsgRequest{
-		FromUid: userId,  // qq
-		ToUid:   req.Uid, // 163
-		// todo : lack of nickname field. i will add this field when i integrating RPC service
-		Body:      req.Msg,
-		TimeStamp: time.Now().Unix(),
+		FromUid:    userId,  // qq
+		ToUid:      req.Uid, // 163
+		ToNickname: l.getNameByUid(req.Uid),
+		Body:       req.Msg,
+		TimeStamp:  time.Now().Unix(),
 	}
 	rJson, err := json.Marshal(r)
 	if err != nil {
@@ -63,4 +64,14 @@ func (l *SendMsgLogic) SendMsg(req *types.SendMsgReq) error {
 		return errorx.Internal(err, "store msg error").Show()
 	}
 	return nil
+}
+
+func (l *SendMsgLogic) getNameByUid(uid string) string {
+	in := pb.GetUserInfoReq{Uid: uid}
+	userInfo, err := l.svcCtx.UserC.GetUserInfo(l.ctx, &in)
+	if err != nil {
+		log.Printf("err:%s", err)
+		return ""
+	}
+	return userInfo.Nickname
 }

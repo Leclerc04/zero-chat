@@ -3,38 +3,30 @@ package svc
 import (
 	"database/sql"
 	"github.com/redis/go-redis/v9"
-	"github.com/zeromicro/go-zero/rest"
-	"github.com/zeromicro/go-zero/zrpc"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 	"log"
-	"zero-chat/chat/api/internal/config"
-	"zero-chat/chat/api/internal/middleware"
-	"zero-chat/chat/api/internal/model"
-	"zero-chat/user/rpc/user"
+	"zero-chat/user/rpc/internal/config"
+	"zero-chat/user/rpc/internal/model"
 )
 
 type ServiceContext struct {
-	Config       config.Config
-	Authority    rest.Middleware
-	Redis        *redis.Client
-	DB           *gorm.DB
-	MessageModel model.MessageModel
-	UserC        user.User
+	Config    config.Config
+	Redis     *redis.Client
+	DB        *gorm.DB
+	UserModel model.UserModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	db := Init(c)
 	rds := InitRedis(c)
 	return &ServiceContext{
-		Config:       c,
-		Authority:    middleware.NewAuthorityMiddleware(c.Auth.AccessSecret).Handle,
-		Redis:        rds,
-		DB:           db,
-		MessageModel: model.NewMessageModel(db),
-		UserC:        user.NewUser(zrpc.MustNewClient(c.UsercenterRpcConf)),
+		Config:    c,
+		DB:        db,
+		Redis:     rds,
+		UserModel: model.NewUserModel(db),
 	}
 }
 

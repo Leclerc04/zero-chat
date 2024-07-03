@@ -2,15 +2,15 @@ package config
 
 import (
 	"github.com/zeromicro/go-zero/core/stores/redis"
-	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type Config struct {
-	rest.RestConf
+	zrpc.RpcServerConf
 	Auth struct {
-		AccessSecret string
-		AccessExpire int64
+		AccessSecret  string
+		AccessExpire  int64
+		RefreshExpire int64
 	}
 	MySQL struct {
 		DSN             string
@@ -19,6 +19,5 @@ type Config struct {
 		MaxIdleCons     int
 		CreateBatchSize int
 	}
-	UsercenterRpcConf zrpc.RpcClientConf
-	RedisConf         redis.RedisConf
+	RedisConf redis.RedisConf
 }
