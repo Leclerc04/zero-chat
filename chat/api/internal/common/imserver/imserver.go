@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"github.com/redis/go-redis/v9"
+	"github.com/segmentio/kafka-go"
 	"log"
 	"net/http"
 	"sync"
@@ -15,13 +16,13 @@ import (
 
 type (
 	ImServer struct {
-		//kafkaBroker *util.KafkaBroker
-		rds     *redis.Client
-		clients map[string]*websocket.Conn
-		Address string
-		lock    sync.Mutex
-		upgraer *websocket.Upgrader
-		ctx     context.Context
+		kafkaBroker *kafka.Reader
+		rds         *redis.Client
+		clients     map[string]*websocket.Conn
+		Address     string
+		lock        sync.Mutex
+		upgraer     *websocket.Upgrader
+		ctx         context.Context
 	}
 	SendMsgRequest struct {
 		FromUid       string `json:"fromUid"`
@@ -44,7 +45,7 @@ type (
 )
 
 // func NewImServer(rds *redis.Client, opts ImServerOptions) (*ImServer, error) {
-func NewImServer(rds *redis.Client) (*ImServer, error) {
+func NewImServer(rds *redis.Client, kafkaConn *kafka.Reader) (*ImServer, error) {
 	// 初始化
 	//if err := broker.Init(); err != nil {
 	//	return nil, err
@@ -53,9 +54,10 @@ func NewImServer(rds *redis.Client) (*ImServer, error) {
 	//	return nil, err
 	//}
 	imServer := &ImServer{
-		ctx:     context.Background(),
-		rds:     rds,
-		clients: make(map[string]*websocket.Conn, 0), // 用户：多个websocket链接
+		ctx:         context.Background(),
+		rds:         rds,
+		kafkaBroker: kafkaConn,
+		clients:     make(map[string]*websocket.Conn, 0), // 用户：多个websocket链接
 		// 初始化websocket的读取大小和写入大小
 		upgraer: &websocket.Upgrader{
 			ReadBufferSize:  1024,
@@ -98,6 +100,28 @@ func (l *ImServer) SendMsg(r *SendMsgRequest) (*SendMsgResponse, error) {
 	}
 	log.Printf("send message succes  %v", r.Body)
 	return &SendMsgResponse{}, nil
+}
+
+func (l *ImServer) SubscribeTwo() {
+	for {
+		fmt.Println("start subscribe")
+		message, err := l.kafkaBroker.ReadMessage(context.Background())
+		if err != nil {
+			fmt.Println("read kafka failed:", err)
+			break
+		}
+
+		r := new(SendMsgRequest)
+		if err = json.Unmarshal(message.Value, r); err != nil {
+			log.Printf("[Unmarshal msg err] : %+v", err)
+			return
+		}
+		if _, err = l.SendMsg(r); err != nil {
+			log.Printf("[SendMsg err] : %+v", err)
+			return
+		}
+		log.Printf("has Subscribe msg %+v", r.Body)
+	}
 }
 
 func (l *ImServer) Subscribe() {

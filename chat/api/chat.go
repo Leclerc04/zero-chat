@@ -31,26 +31,15 @@ func main() {
 	//defer cancel()
 	//go tmp(ct, ctx)
 
-	imServer, err := imserver.NewImServer(ctx.Redis)
+	imServer, err := imserver.NewImServer(ctx.Redis, ctx.KafkaReader)
 	log.Printf("imServer:s%", imServer)
 	if err != nil {
 		log.Fatal(err)
 	}
-	go imServer.Subscribe()
+	go imServer.SubscribeTwo()
+	//go imServer.Subscribe()
 	go imServer.Run()
 
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()
 }
-
-//func tmp(ctx context.Context, server *svc.ServiceContext) {
-//	fmt.Println("start sub")
-//	for {
-//		sub := server.Redis.Subscribe(ctx, "2")
-//		message, err := sub.ReceiveMessage(ctx)
-//		if err != nil {
-//			fmt.Println("err main:", err)
-//		}
-//		fmt.Println("main received msg:", message)
-//	}
-//}

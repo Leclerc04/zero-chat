@@ -3,17 +3,17 @@ package svc
 import (
 	"database/sql"
 	"github.com/redis/go-redis/v9"
+	"github.com/segmentio/kafka-go"
 	"github.com/zeromicro/go-zero/rest"
-	"github.com/zeromicro/go-zero/zrpc"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 	"log"
+	"time"
 	"zero-chat/chat/api/internal/config"
 	"zero-chat/chat/api/internal/middleware"
 	"zero-chat/chat/api/internal/model"
-	"zero-chat/user/rpc/user"
 )
 
 type ServiceContext struct {
@@ -22,7 +22,9 @@ type ServiceContext struct {
 	Redis        *redis.Client
 	DB           *gorm.DB
 	MessageModel model.MessageModel
-	UserC        user.User
+	//UserC        user.User
+	KafkaReader *kafka.Reader
+	KafkaWriter *kafka.Writer
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -34,8 +36,30 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Redis:        rds,
 		DB:           db,
 		MessageModel: model.NewMessageModel(db),
-		UserC:        user.NewUser(zrpc.MustNewClient(c.UsercenterRpcConf)),
+		//UserC:        user.NewUser(zrpc.MustNewClient(c.UsercenterRpcConf)),
+		KafkaReader: InitKafkaReader(c),
+		KafkaWriter: InitKafkaWriter(c),
 	}
+}
+
+func InitKafkaWriter(c config.Config) *kafka.Writer {
+	return &kafka.Writer{
+		Addr:                   kafka.TCP(c.Kafka.Addr),
+		Topic:                  c.Kafka.Topic,
+		Balancer:               &kafka.Hash{},
+		WriteTimeout:           1 * time.Second,
+		RequiredAcks:           kafka.RequireNone,
+		AllowAutoTopicCreation: true, // 一般交由运维管理，即实际开发应该是false
+	}
+}
+func InitKafkaReader(c config.Config) *kafka.Reader {
+	return kafka.NewReader(kafka.ReaderConfig{
+		Brokers:        []string{c.Kafka.Addr},
+		Topic:          c.Kafka.Topic,
+		CommitInterval: 1 * time.Second, // 隔一段时间提交offset
+		GroupID:        "zero_chat",
+		StartOffset:    kafka.FirstOffset, // 新的consumer从最开始的，消息开始消费，仅对刚开始有效
+	})
 }
 
 func Init(c config.Config) (db *gorm.DB) {

@@ -19,6 +19,12 @@ type Config struct {
 		MaxIdleCons     int
 		CreateBatchSize int
 	}
+	Kafka struct {
+		Addr      string
+		Topic     string
+		Partition int
+		BatchSize int
+	}
 	UsercenterRpcConf zrpc.RpcClientConf
 	RedisConf         redis.RedisConf
 }
