@@ -32,11 +32,11 @@ func main() {
 	//go tmp(ct, ctx)
 
 	imServer, err := imserver.NewImServer(ctx.Redis, ctx.KafkaReader)
-	log.Printf("imServer:s%", imServer)
+	//log.Printf("imServer:s%", imServer)
 	if err != nil {
 		log.Fatal(err)
 	}
-	go imServer.SubscribeTwo()
+	go imServer.SubscribeKafka()
 	//go imServer.Subscribe()
 	go imServer.Run()
 

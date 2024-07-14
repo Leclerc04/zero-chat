@@ -61,8 +61,8 @@ func InitKafkaReader(c config.Config) *kafka.Reader {
 		Brokers:        []string{c.Kafka.Addr},
 		Topic:          c.Kafka.Topic,
 		CommitInterval: 1 * time.Second, // 隔一段时间提交offset
-		GroupID:        "zero_chat",
-		StartOffset:    kafka.FirstOffset, // 新的consumer从最开始的，消息开始消费，仅对刚开始有效
+		//GroupID:        "zero_chat",
+		StartOffset: kafka.FirstOffset, // 新的consumer从最开始的，消息开始消费，仅对刚开始有效
 	})
 }
 

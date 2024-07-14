@@ -16,7 +16,7 @@ import (
 
 type (
 	ImServer struct {
-		kafkaBroker *kafka.Reader
+		kafkaReader *kafka.Reader
 		rds         *redis.Client
 		clients     map[string]*websocket.Conn
 		Address     string
@@ -45,18 +45,11 @@ type (
 )
 
 // func NewImServer(rds *redis.Client, opts ImServerOptions) (*ImServer, error) {
-func NewImServer(rds *redis.Client, kafkaConn *kafka.Reader) (*ImServer, error) {
-	// 初始化
-	//if err := broker.Init(); err != nil {
-	//	return nil, err
-	//}
-	//if err := broker.Connect(); err != nil {
-	//	return nil, err
-	//}
+func NewImServer(rds *redis.Client, kafkaReader *kafka.Reader) (*ImServer, error) {
 	imServer := &ImServer{
 		ctx:         context.Background(),
 		rds:         rds,
-		kafkaBroker: kafkaConn,
+		kafkaReader: kafkaReader,
 		clients:     make(map[string]*websocket.Conn, 0), // 用户：多个websocket链接
 		// 初始化websocket的读取大小和写入大小
 		upgraer: &websocket.Upgrader{
@@ -67,9 +60,6 @@ func NewImServer(rds *redis.Client, kafkaConn *kafka.Reader) (*ImServer, error) 
 			},
 		},
 	}
-	//if opts != nil {
-	//	opts(imServer)
-	//}
 	if imServer.Address == "" {
 		imServer.Address = "0.0.0.0:14102"
 	}
@@ -102,15 +92,15 @@ func (l *ImServer) SendMsg(r *SendMsgRequest) (*SendMsgResponse, error) {
 	return &SendMsgResponse{}, nil
 }
 
-func (l *ImServer) SubscribeTwo() {
+func (l *ImServer) SubscribeKafka() {
 	for {
 		fmt.Println("start subscribe")
-		message, err := l.kafkaBroker.ReadMessage(context.Background())
+		message, err := l.kafkaReader.ReadMessage(context.Background())
 		if err != nil {
 			fmt.Println("read kafka failed:", err)
 			break
 		}
-
+		fmt.Println("here ,i can receive msg from kafka")
 		r := new(SendMsgRequest)
 		if err = json.Unmarshal(message.Value, r); err != nil {
 			log.Printf("[Unmarshal msg err] : %+v", err)
