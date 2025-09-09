@@ -2,11 +2,12 @@ package user
 
 import (
 	"context"
-	encrypt "github.com/bellingham07/go-tool/encryt"
-	"github.com/bellingham07/go-tool/errorx"
 	"zero-chat/api/internal/model"
 	"zero-chat/api/internal/svc"
 	"zero-chat/api/internal/types"
+
+	encrypt "github.com/leclerc04/go-tool/encryt"
+	"github.com/leclerc04/go-tool/errorx"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

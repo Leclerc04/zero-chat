@@ -1,11 +1,12 @@
 package middleware
 
 import (
-	"github.com/bellingham07/go-tool/codex"
-	"github.com/bellingham07/go-tool/errorx"
-	"github.com/bellingham07/go-tool/httpc"
-	"github.com/zeromicro/go-zero/rest/handler"
 	"net/http"
+
+	"github.com/leclerc04/go-tool/codex"
+	"github.com/leclerc04/go-tool/errorx"
+	"github.com/leclerc04/go-tool/httpc"
+	"github.com/zeromicro/go-zero/rest/handler"
 )
 
 type AuthorityMiddleware struct {

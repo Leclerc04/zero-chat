@@ -1,10 +1,11 @@
 package contact
 
 import (
-	"github.com/bellingham07/go-tool/httpc"
 	"net/http"
 	"zero-chat/api/internal/logic/contact"
 	"zero-chat/api/internal/svc"
+
+	"github.com/leclerc04/go-tool/httpc"
 )
 
 func GetContactHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {

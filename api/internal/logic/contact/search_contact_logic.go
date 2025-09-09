@@ -3,10 +3,11 @@ package contact
 import (
 	"context"
 	"fmt"
-	"github.com/bellingham07/go-tool/errorx"
 	"strconv"
 	"zero-chat/api/internal/svc"
 	"zero-chat/api/internal/types"
+
+	"github.com/leclerc04/go-tool/errorx"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

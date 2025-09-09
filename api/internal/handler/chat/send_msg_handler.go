@@ -1,12 +1,13 @@
 package chat
 
 import (
-	"github.com/bellingham07/go-tool/errorx"
-	"github.com/bellingham07/go-tool/httpc"
 	"net/http"
 	"zero-chat/api/internal/logic/chat"
 	"zero-chat/api/internal/svc"
 	"zero-chat/api/internal/types"
+
+	"github.com/leclerc04/go-tool/errorx"
+	"github.com/leclerc04/go-tool/httpc"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
 )

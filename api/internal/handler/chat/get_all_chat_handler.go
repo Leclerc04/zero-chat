@@ -1,10 +1,11 @@
 package chat
 
 import (
-	"github.com/bellingham07/go-tool/httpc"
 	"net/http"
 	"zero-chat/api/internal/logic/chat"
 	"zero-chat/api/internal/svc"
+
+	"github.com/leclerc04/go-tool/httpc"
 )
 
 func GetAllChatHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
